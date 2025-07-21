@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "slurm-jupyter",
+      "type": "shell",
+      // 0.0.0.0 would be insecure if the cluster agents weren't on a private network
+      "command": "srun --gres=${input:gpu-resource-spec} --job-name=ppnxt-jupyter ${command:python.interpreterPath} -m jupyter notebook --ip 0.0.0.0 --port 9876 --no-browser --notebook-dir=${workspaceFolder}",
+      "problemMatcher": []
+    },
+    {
+      "label": "slurm-debug",
+      "type": "shell",
+      // 0.0.0.0 would be insecure if the cluster agents weren't on a private network
+      "command": "srun --gres=${input:gpu-resource-spec} --job-name=ppnxt-debug ${command:python.interpreterPath} -m debugpy --listen 0.0.0.0:4567 --wait-for-client ${input:python-command}",
+      "problemMatcher": []
+    },
+    {
+      "label": "slurm-unit",
+      "type": "shell",
+      "command": "srun --gres=${input:gpu-resource-spec} --job-name=ppnxt-ut ${command:python.interpreterPath} -m pytest -m 'not e2e and not mps'",
+      "problemMatcher": []
+    },
+    {
+      "label": "slurm-e2e",
+      "type": "shell",
+      "command": "srun --gres=${input:gpu-resource-spec} --job-name=ppnxt-e2e ${command:python.interpreterPath} -m pytest -m 'e2e'",
+      "problemMatcher": []
+    },
+    {
+      "label": "slurm-pytest-one",
+      "type": "shell",
+      "command": "srun --gres=${input:gpu-resource-spec} --job-name=ppnxt-e2e ${command:python.interpreterPath} -m pytest --tb=long ${input:test-name}",
+      "problemMatcher": []
+    },
+  ],
+  "inputs":[
+    {
+      "id": "python-command",
+      "type": "promptString",
+      "description": "Enter the python command you want to run on the slurm cluster."
+    },
+    {
+      "id": "test-name",
+      "type": "promptString",
+      "description": "Enter the name of the test you want to run."
+    },
+    {
+      "id": "gpu-resource-spec",
+      "type": "pickString",
+      "description": "What kind of GPU do you want to run against? Use gpu:1 for any GPU.",
+      "default": "gpu:1",
+      "options": [
+        //1 and 2 options let you test data parallel.
+        //see https://cs.duke.edu/csl/facilities/cluster
+        "gpu:1",
+        "gpu:2",
+        "gpu:2080rtx:1",
+        "gpu:2080rtx:2",
+        "gpu:a5000:1",
+        "gpu:a5000:2",
+        "gpu:p100:1",
+        "gpu:p100:2",
+        "gpu:v100:1",
+        "gpu:v100:2"
+      ]
+    }
+  ]
+}
+  

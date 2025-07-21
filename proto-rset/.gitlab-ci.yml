@@ -1,0 +1,66 @@
+default:
+  # see ci/README.md for details on this image
+  image:
+    name: gitlab-registry.oit.duke.edu/jcd97/proto-rset/cpu-test:0.2.1
+    # 2023-09-11: OIT restricts to always pulling
+    # (though, this isn't documented anywhere, but if you change it it throws an error)
+    pull_policy: always
+
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  CIFAR10_DIR: "$CI_PROJECT_DIR/cifar10"
+
+stages:
+  - lint
+  - test
+
+before_script:
+  - python --version # For debugging
+  - conda info || echo 'non-conda python environment'
+
+lint:
+  stage: lint
+  image:
+    name: gitlab-registry.oit.duke.edu/jcd97/proto-rset/lint:0.2.1
+    pull_policy: always
+  script:
+    # config comes from pyproject.toml
+    - flake8
+
+unit_test:
+  stage: test
+  script:
+    # Unit Tests
+    # installs updates to dependencies in case the build containers haven't been rebuilt
+    # pytorch link is omitted to force failure if pytorch is updated
+    # In that case, the project version should be updated and the container rebuilt. See CONTRIBUTING.md
+    - pip install -r env/requirements-frozen.txt
+    - pytest --junitxml=test/out/unit-test.xml --cov-report xml:test/out/unit-coverage.xml -m "not e2e and not cuda and not mps"
+
+  coverage: /(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/ # regex to match coverage percentage
+  artifacts:
+    reports:
+      junit: test/out/unit-test.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: test/out/unit-coverage.xml
+
+int_test:
+  stage: test
+  timeout: 3h
+  script:
+    - pip install -r env/requirements-frozen.txt
+    - pytest --junitxml=test/out/e2e-test.xml -m e2e
+  dependencies:
+    - unit_test
+  artifacts:
+    reports:
+      junit: test/out/e2e-test.xml
+  rules:
+    - changes:
+        - "*.md"
+      when: never
+    - when: always

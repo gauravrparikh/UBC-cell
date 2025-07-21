@@ -1,0 +1,11 @@
+{
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "jupyter.jupyterCommandLineArguments": [
+        "--no-browser",
+        "--notebook-dir=${workspaceFolder}",
+    ],
+    "python.testing.pytestArgs": [
+        "-m", "not e2e"
+    ],
+}
