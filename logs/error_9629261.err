@@ -1,0 +1,18 @@
+/usr/project/xtmp/UBC2025/.venv/lib/python3.11/site-packages/numba/np/ufunc/parallel.py:371: NumbaWarning: The TBB threading layer requires TBB version 2021 update 6 or later i.e., TBB_INTERFACE_VERSION >= 12060. Found TBB_INTERFACE_VERSION = 12050. The TBB threading layer is disabled.
+  warnings.warn(problem)
+Warning: random state is set to 42.
+Traceback (most recent call last):
+  File "/usr/xtmp/UBC2025/experiment_0.py", line 226, in <module>
+    main(args, run_output_dir, random_seed)
+  File "/usr/xtmp/UBC2025/experiment_0.py", line 191, in main
+    cne_embedding = fit_other_embeddings(X_sample, embedding_method=method)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/xtmp/UBC2025/experiment_0.py", line 70, in fit_other_embeddings
+    embedding = model.fit_transform(matrix.astype(np.float32))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/project/xtmp/UBC2025/.venv/lib/python3.11/site-packages/cne/_cne.py", line 211, in fit_transform
+    self.fit(X, init=init, graph=graph)
+  File "/usr/project/xtmp/UBC2025/.venv/lib/python3.11/site-packages/cne/_cne.py", line 292, in fit
+    self.cne = ContrastiveEmbedding(self.model,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ContrastiveEmbedding.__init__() got an unexpected keyword argument 'n_components'

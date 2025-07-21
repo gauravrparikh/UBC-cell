@@ -57,12 +57,9 @@ def preprocess_data(adata):
     Returns:
         ad.AnnData: The preprocessed AnnData object.
     """
+    sc.pp.log1p(adata)
     sc.pp.highly_variable_genes(adata, n_top_genes=1000) # reason about this. It does mean adjusted variance of some sort. 
     adata = adata[:, adata.var['highly_variable']]
-    sc.pp.normalize_total(adata, target_sum=1e4)
-    sc.pp.log1p(adata)
-    sc.pp.scale(adata, max_value=10)
-    sc.tl.pca(adata, n_comps=30, svd_solver='arpack')
     return adata
 
 def plot_embedding(embedding, labels, title, filename):
@@ -100,14 +97,13 @@ def main(data_path, sample_size, preprocess, label_column, use_existing_embeddin
     np.random.seed(42)  # For reproducibility 
     adata = load_data(data_path)
     if adata is not None:
-        # print(f"Dataset contains {adata.n_obs} observations and {adata.n_vars} variables.")
-        # print(adata)
         freq_matrix = adata.X
         labels = adata.obs[label_column] if label_column in adata.obs else None
       
         if (preprocess is True):
             print("Preprocessing the dataset...")
             processed_dataset = preprocess_data(adata)
+            np.savetxt('/usr/xtmp/UBC2025/data/Processed_Human_Cell_Atlas.csv', processed_dataset.X.toarray(), delimiter=',')
             
             subset_idx = np.random.choice(processed_dataset.n_obs, sample_size, replace=False)
             

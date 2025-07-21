@@ -1,0 +1,21 @@
+Activating virtual environment...
+Environment activated.
+Starting experiment script...
+
+============================================================
+STARTING RUN 1/5 (Seed: 42)
+Output will be saved to: ./experiment_results/run_0_seed_42
+============================================================
+Data loaded successfully from /usr/xtmp/UBC2025/data/human_cell_atlas.h5ad
+Dataset contains 2480956 observations and 59236 variables.
+Skipping preprocessing.
+Selected 50000 random samples. Data matrix shape: (50000, 59236)
+
+--- Processing PaCMAP ---
+Fitting PaCMAP with random_seed=42...
+Saved embedding of shape (50000, 2) to ./experiment_results/run_0_seed_42/PaCMAP_Raw_HCA.csv
+Saved plot to ./experiment_results/run_0_seed_42/PaCMAP_Raw_HCA.png
+
+--- Processing CNE with method: infonce ---
+Fitting CNE with loss_mode='infonce'...
+Experiment script finished.
