@@ -1,7 +1,6 @@
 
 # Python Output
 
-models
 runs/
 test/runs
 test/wandb
@@ -12,6 +11,7 @@ parse_slurm_out.py
 
 venv
 .venv
+*.pth
 *.pt
 save_path_test/**
 rcteg_env
