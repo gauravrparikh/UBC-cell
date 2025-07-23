@@ -53,7 +53,7 @@ parameters:
     distribution: normal
     mu: -0.8
     sigma: 0.5
-
+  
   separation_coef:
     # 10th: -0.05, 90th: 0.21
     distribution: normal
@@ -64,6 +64,11 @@ parameters:
     distribution: log_uniform_values
     min: 0.00001
     max: 0.001
+
+  stretch_mat_sparsity:
+    distribution: log_uniform_values
+    min: 0.00001
+    max: 0.1
 
   interpretable_metrics:
     values: [False]

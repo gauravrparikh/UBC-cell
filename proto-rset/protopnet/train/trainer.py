@@ -11,6 +11,7 @@ from ..losses import (
     ClusterCost,
     FineAnnotationCost,
     L1CostClassConnectionLayer,
+    StretchMatrixSparsity,
     LossTerm,
     OrthogonalityLoss,
     SeparationCost,
@@ -128,6 +129,10 @@ class ProtoPNetTrainer:
         model_losses = [
             LossTerm(loss=L1CostClassConnectionLayer(), coefficient=self.coefs["l1"]),
         ]
+        if hasattr(model.add_on_layers, "stretch_param"):
+            model_losses.append(
+                LossTerm(loss=StretchMatrixSparsity(), coefficient=self.coefs["stretch_mat_sparsity"])
+            )
 
         if "orthogonality_loss" in self.coefs:
             model_losses.append(

@@ -66,6 +66,16 @@ class L1CostClassConnectionLayer(nn.Module):
         return l1
 
 
+class StretchMatrixSparsity(nn.Module):
+    def __init__(self):
+        super(StretchMatrixSparsity, self).__init__()
+        self.name = "stretch_sparsity"
+
+    def forward(self, model: "ProtoPNet"):
+        l1 = model.add_on_layers.stretch_param.norm(p=1)
+        return l1
+
+
 class ClusterCost(nn.Module):
     def __init__(self, class_specific: bool = True):
         super(ClusterCost, self).__init__()

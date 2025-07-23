@@ -10,7 +10,7 @@ import wandb
 from . import datasets
 from .activations import CosPrototypeActivation
 from .backbones import construct_backbone
-from .embedding import AddonLayers
+from .embedding import AddonLayers, AddonLayersWithDiagonalStretch
 from .models.vanilla_protopnet import VanillaProtoPNet
 from .train.logging.weights_and_biases import WeightsAndBiasesTrainLogger
 from .train.metrics import InterpretableTrainingMetrics
@@ -45,6 +45,7 @@ def run(
     lr_multiplier=1,
     lr_step_gamma=0.1,
     orthogonality_loss=0.01,
+    stretch_mat_sparsity=1e-5,
     class_specific=False,
     dry_run=False,
     verify=False,
@@ -61,7 +62,8 @@ def run(
     resume=False,
     resume_weight_path: str = '',
     use_test_dataset: bool = False,
-    use_modified_set: bool = False
+    use_modified_set: bool = False,
+    use_stretch_layers: bool = True
 ):
     """
     Train a Vanilla ProtoPNet.
@@ -131,7 +133,8 @@ def run(
             "orthogonality_loss": orthogonality_loss,
             "l1": l1_coef,
             "cross_entropy": 1,
-            "fa": fa_coef
+            "fa": fa_coef,
+            "stretch_mat_sparsity": stretch_mat_sparsity
         },
         "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     }
@@ -254,13 +257,22 @@ def run(
 
     backbone = construct_backbone(backbone, input_channels=(3, *split_dataloaders.image_size))
 
-    add_on_layers = AddonLayers(
-        num_prototypes=setup["num_prototypes_per_class"]
-        * split_dataloaders.num_classes,
-        input_channels=backbone.latent_dimension[0],
-        proto_channel_multiplier=2**latent_dim_multiplier_exp,
-        num_addon_layers=num_addon_layers,
-    )
+    if use_stretch_layers:
+        add_on_layers = AddonLayersWithDiagonalStretch(
+            num_prototypes=setup["num_prototypes_per_class"]
+            * split_dataloaders.num_classes,
+            input_channels=backbone.latent_dimension[0],
+            proto_channel_multiplier=2**latent_dim_multiplier_exp,
+            num_addon_layers=num_addon_layers,
+        )
+    else: 
+        add_on_layers = AddonLayers(
+            num_prototypes=setup["num_prototypes_per_class"]
+            * split_dataloaders.num_classes,
+            input_channels=backbone.latent_dimension[0],
+            proto_channel_multiplier=2**latent_dim_multiplier_exp,
+            num_addon_layers=num_addon_layers,
+        )
 
     vppn = VanillaProtoPNet(
         backbone=backbone,

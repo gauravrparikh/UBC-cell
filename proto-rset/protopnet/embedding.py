@@ -92,3 +92,32 @@ class AddonLayers(nn.Module):
     def forward(self, x: torch.Tensor):
         # Define the forward pass for the backbone
         return self.add_on_layers(x)
+
+
+class AddonLayersWithDiagonalStretch(AddonLayers):
+    """
+    A simple wrapper around addon layers that adds a diagonal
+    stretch matrix to apply before our similarity metric
+    """
+
+    def __init__(
+        self,
+        num_prototypes: torch.Tensor,
+        input_channels: int = 512,
+        proto_channel_multiplier: float = 2**-2,
+        num_addon_layers: int = 2,
+    ):
+        super(AddonLayersWithDiagonalStretch, self).__init__(
+            num_prototypes=num_prototypes,
+            input_channels=input_channels,
+            proto_channel_multiplier=proto_channel_multiplier,
+            num_addon_layers=num_addon_layers
+        )
+
+        self.stretch_param = nn.Parameter(
+            torch.ones(1, self.proto_channels, 1, 1)
+        )
+
+    def forward(self, x: torch.Tensor):
+        # Define the forward pass for the backbone
+        return self.add_on_layers(x) * self.stretch_param
