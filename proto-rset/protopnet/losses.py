@@ -72,8 +72,8 @@ class StretchMatrixSparsity(nn.Module):
         self.name = "stretch_sparsity"
 
     def forward(self, model: "ProtoPNet"):
-        l1 = model.add_on_layers.stretch_param.norm(p=1)
-        return l1
+        stretch_params = model.add_on_layers.get_stretch_param()
+        return stretch_params.norm(p=1)
 
 
 class ClusterCost(nn.Module):

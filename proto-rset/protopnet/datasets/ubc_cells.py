@@ -61,13 +61,13 @@ def train_dataloaders(
     debug_forbid_dir: str = "debug_folder/forbid",
     debug_remember_dir: str = "debug_folder/remember",
     excluded_classes=[
-        "Miscellaneuous",
-        "unannoted", 
-        "Splatter", 
-        "Deep-layer intratelencephalic", 
-        "MGE interneuron", 
-        "Astrocyte", 
-        "Amygdala excitatory"
+        # "Miscellaneuous",
+        # "unannoted", 
+        # "Splatter", 
+        # "Deep-layer intratelencephalic", 
+        # "MGE interneuron", 
+        # "Astrocyte", 
+        # "Amygdala excitatory"
     ]
 ):
 

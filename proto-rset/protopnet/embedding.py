@@ -115,9 +115,12 @@ class AddonLayersWithDiagonalStretch(AddonLayers):
         )
 
         self.stretch_param = nn.Parameter(
-            torch.ones(1, self.proto_channels, 1, 1)
+            torch.rand(1, self.proto_channels, 1, 1)
         )
+
+    def get_stretch_param(self):
+        return torch.relu(self.stretch_param)
 
     def forward(self, x: torch.Tensor):
         # Define the forward pass for the backbone
-        return self.add_on_layers(x) * self.stretch_param
+        return self.add_on_layers(x) * self.get_stretch_param()
